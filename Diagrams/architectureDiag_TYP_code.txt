@@ -1,1 +1,45 @@
+// CODELAB: from diagrams import Diagram, Cluster
+from diagrams.generic.network import Switch
+from diagrams.azure.storage import BlobStorage
+from diagrams.onprem.client import User as UserClient
+from diagrams.onprem.compute import Server
 
+
+with Diagram("Energy Consumption Visualization Architecture", show=False) as energy_diagram:
+
+
+   with Cluster("Data Sources"):
+       smart_meters = Server("Smart Meters")
+       weather_data = Server("Weather Data")
+       historical_data = Server("Historical Data")
+
+
+   with Cluster("Azure Services"):
+       data_factory = Switch("Azure Data Factory")
+       databricks = Switch("Azure Databricks")
+       blob_storage = BlobStorage("Azure Blob Storage")
+      
+   with Cluster("Database"):
+       data_storage=Switch("Snowflake")
+
+
+   with Cluster("Machine Learning"):
+       data_preprocessing = Server("Data Preprocessing")
+       model_training = Server("Model Training")
+       prediction = Server("Prediction")
+
+
+   with Cluster("Visualization"):
+       visualization = UserClient("Visualization")
+      
+   smart_meters >> data_factory
+   weather_data >> data_factory
+   historical_data >> data_factory
+   data_factory >> blob_storage
+   blob_storage >> databricks
+   databricks >> data_storage
+   data_storage >> data_preprocessing
+   data_preprocessing >> model_training
+   model_training >> prediction
+   prediction >> visualization
+energy_diagram
